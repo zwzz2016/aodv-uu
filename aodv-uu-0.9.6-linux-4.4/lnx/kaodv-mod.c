@@ -379,17 +379,17 @@ static int __init kaodv_init(void)
 	if (ret < 0)
 		goto cleanup_queue;
 
-	ret = nf_register_hook(&kaodv_ops[0]);
+	ret = nf_register_hook(&init_net,&kaodv_ops[0]);
 
 	if (ret < 0)
 		goto cleanup_netlink;
 
-	ret = nf_register_hook(&kaodv_ops[1]);
+	ret = nf_register_hook(&init_net,&kaodv_ops[1]);
 
 	if (ret < 0)
 		goto cleanup_hook0;
 
-	ret = nf_register_hook(&kaodv_ops[2]);
+	ret = nf_register_hook(&init_net,&kaodv_ops[2]);
 
 	if (ret < 0)
 		goto cleanup_hook1;
@@ -418,9 +418,9 @@ static int __init kaodv_init(void)
 	return ret;
 
 cleanup_hook1:
-	nf_unregister_hook(&kaodv_ops[1]);
+	nf_unregister_hook(&init_net,&kaodv_ops[1]);
 cleanup_hook0:
-	nf_unregister_hook(&kaodv_ops[0]);
+	nf_unregister_hook(&init_net,&kaodv_ops[0]);
 cleanup_netlink:
 	kaodv_netlink_fini();
 cleanup_queue:
@@ -438,7 +438,7 @@ static void __exit kaodv_exit(void)
 	if_info_purge();
 
 	for (i = 0; i < sizeof(kaodv_ops) / sizeof(struct nf_hook_ops); i++)
-		nf_unregister_hook(&kaodv_ops[i]);
+		nf_unregister_hook(&init_net,&kaodv_ops[i]);
 	//proc_remove(init_net.proc_net);
 	remove_proc_entry("kaodv",init_net.proc_net);
 	kaodv_queue_fini();
