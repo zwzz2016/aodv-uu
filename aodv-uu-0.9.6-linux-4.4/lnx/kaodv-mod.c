@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Erik Nordström, <erik.nordstrom@it.uu.se>
+ * Author: Erik NordstrÃ¶m, <erik.nordstrom@it.uu.se>
  * 
  *****************************************************************************/
 #include <stddef.h>
@@ -70,8 +70,8 @@ int active_route_timeout = 3000;
 //static unsigned int loindex = 0;
 
 MODULE_DESCRIPTION
-    ("AODV-UU kernel support. © Uppsala University & Ericsson AB");
-MODULE_AUTHOR("Erik Nordström");
+    ("AODV-UU kernel support. Â© Uppsala University & Ericsson AB");
+MODULE_AUTHOR("Erik NordstrÃ¶m");
 #ifdef MODULE_LICENSE
 MODULE_LICENSE("GPL");
 #endif
@@ -379,17 +379,17 @@ static int __init kaodv_init(void)
 	if (ret < 0)
 		goto cleanup_queue;
 
-	ret = nf_register_hook(&init_net,&kaodv_ops[0]);
+	ret = nf_register_net_hook(&init_net,&kaodv_ops[0]);
 
 	if (ret < 0)
 		goto cleanup_netlink;
 
-	ret = nf_register_hook(&init_net,&kaodv_ops[1]);
+	ret = nf_register_net_hook(&init_net,&kaodv_ops[1]);
 
 	if (ret < 0)
 		goto cleanup_hook0;
 
-	ret = nf_register_hook(&init_net,&kaodv_ops[2]);
+	ret = nf_register_net_hook(&init_net,&kaodv_ops[2]);
 
 	if (ret < 0)
 		goto cleanup_hook1;
@@ -418,9 +418,9 @@ static int __init kaodv_init(void)
 	return ret;
 
 cleanup_hook1:
-	nf_unregister_hook(&init_net,&kaodv_ops[1]);
+	nf_unregister_net_hook(&init_net,&kaodv_ops[1]);
 cleanup_hook0:
-	nf_unregister_hook(&init_net,&kaodv_ops[0]);
+	nf_unregister_net_hook(&init_net,&kaodv_ops[0]);
 cleanup_netlink:
 	kaodv_netlink_fini();
 cleanup_queue:
@@ -438,7 +438,7 @@ static void __exit kaodv_exit(void)
 	if_info_purge();
 
 	for (i = 0; i < sizeof(kaodv_ops) / sizeof(struct nf_hook_ops); i++)
-		nf_unregister_hook(&init_net,&kaodv_ops[i]);
+		nf_unregister_net_hook(&init_net,&kaodv_ops[i]);
 	//proc_remove(init_net.proc_net);
 	remove_proc_entry("kaodv",init_net.proc_net);
 	kaodv_queue_fini();
