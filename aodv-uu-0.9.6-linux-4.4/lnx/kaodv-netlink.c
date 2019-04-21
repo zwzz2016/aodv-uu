@@ -191,7 +191,7 @@ static int kaodv_netlink_receive_peer(unsigned char type, void *msg,
 
 		ret = kaodv_expl_get(m->dst, &e);
 
-		if (ret) {
+		if (ret < 0) {
 			ret = kaodv_expl_update(m->dst, m->nhop, m->time,
 						m->flags, m->ifindex);
 		} else {
@@ -253,7 +253,7 @@ static struct notifier_block kaodv_nl_notifier = {
 	.notifier_call = kaodv_netlink_rcv_nl_event,
 };
 
-#define RCV_SKB_FAIL(err) do { netlink_ack(skb, nlh, (err)); return; } while (0)
+#define RCV_SKB_FAIL(err) do { netlink_ack(skb, nlh, (err),NULL); return; } while (0)
 
 static void kaodv_netlink_rcv_skb(struct sk_buff *skb)
 {
@@ -316,7 +316,7 @@ static void kaodv_netlink_rcv_skb(struct sk_buff *skb)
 		RCV_SKB_FAIL(status);
 
 	if (flags & NLM_F_ACK)
-		netlink_ack(skb, nlh, 0);
+		netlink_ack(skb, nlh, 0,NULL);
 	return;
 }
 
